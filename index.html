@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>学科別名簿アプリ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    .input-area {
+      margin-bottom: 20px;
+    }
+    .box {
+      border: 1px solid #333;
+      padding: 10px;
+      width: 300px;
+      min-height: 120px;
+      margin-bottom: 15px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    h3 {
+      margin-top: 0;
+    }
+    ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<h2>学科別 名簿作成アプリ</h2>
+
+<div class="input-area">
+  学籍番号：
+  <input type="text" id="studentId" placeholder="例：23TE019">
+  名前：
+  <input type="text" id="name" placeholder="例：山田太郎">
+  <button onclick="addStudent()">追加</button>
+</div>
+
+<div class="container">
+  <div class="box">
+    <h3>航空工学科</h3>
+    <ul id="TA"></ul>
+  </div>
+  <div class="box">
+    <h3>建築デザイン学科</h3>
+    <ul id="TB"></ul>
+  </div>
+  <div class="box">
+    <h3>環境エンジニアリング学科</h3>
+    <ul id="TC"></ul>
+  </div>
+  <div class="box">
+    <h3>情報・AI・データサイエンス学科</h3>
+    <ul id="TE"></ul>
+  </div>
+  <div class="box">
+    <h3>機械システム工学科</h3>
+    <ul id="TM"></ul>
+  </div>
+</div>
+
+<script>
+  // 学科ごとのデータ保存用
+  const data = {
+    TA: [],
+    TB: [],
+    TC: [],
+    TE: [],
+    TM: []
+  };
+
+  function addStudent() {
+    const id = document.getElementById("studentId").value.trim();
+    const name = document.getElementById("name").value.trim();
+
+    if (!id || !name) {
+      alert("学籍番号と名前を入力してください。");
+      return;
+    }
+
+    // 学籍番号からアルファベット2文字を抽出
+    const match = id.match(/[A-Z]{2}/);
+    if (!match || !data[match[0]]) {
+      alert("学籍番号の形式が正しくありません。");
+      return;
+    }
+
+    const dept = match[0];
+
+    data[dept].push({ id, name });
+
+    // 数字部分で昇順ソート
+    data[dept].sort((a, b) => {
+      const numA = parseInt(a.id.replace(/\D/g, ""));
+      const numB = parseInt(b.id.replace(/\D/g, ""));
+      return numA - numB;
+    });
+
+    render(dept);
+
+    document.getElementById("studentId").value = "";
+    document.getElementById("name").value = "";
+  }
+
+  function render(dept) {
+    const ul = document.getElementById(dept);
+    ul.innerHTML = "";
+
+    data[dept].forEach(student => {
+      const li = document.createElement("li");
+      li.textContent = `${student.id} ${student.name}`;
+      ul.appendChild(li);
+    });
+  }
+</script>
+
+</body>
+</html>
